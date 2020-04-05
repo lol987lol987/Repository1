@@ -1,0 +1,26 @@
+{
+	"manifest_version": 2,
+	"name": "JKF_filter",
+	"description": "by lol987",
+	"version": "1.1",
+	"browser_action": {
+		"default_title": "browser_action.default_title",
+		"default_icon": "icon.png"
+	},
+
+	"background": {
+		"scripts": ["bg.js"],
+		"persistent": false
+	},
+	"content_scripts": [{
+		"matches": ["*://www.jkforum.net/*"],
+		"js": ["content.js", "myWebUtil.js"]
+	}],
+	"browser_action": {
+		"default_icon": "icon.png",
+		"default_popup": "popup.html"
+	},
+	"permissions": ["activeTab", "storage", {
+		"fileSystem": ["write", "retainEntries", "directory"]
+	}]
+}
