@@ -2,7 +2,7 @@ function saveList(idList) {
 	chrome.storage.local.set({
 		'idList': idList
 	}, function() {
-		console.log('存入chrome.storage.local成功:' + idList);
+		console.log('idList存入chrome.storage.local成功:');
 	});
 }
 

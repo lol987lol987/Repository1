@@ -24,7 +24,7 @@ var dButtonEvent = document.getElementById("button1");
 dButtonEvent.addEventListener('click', function(ce) {
 	//dButtonEvent.innerText ='!??';
 	//op.innerHTML = '12345';
-	document.getElementById("output").innerHTML = '123456';
+	//document.getElementById("output").innerHTML = 'failed';
 
 
 	// 從擴充套件向 contentScript 發送訊息

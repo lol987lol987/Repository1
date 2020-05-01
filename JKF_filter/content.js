@@ -6,14 +6,31 @@ activeWhenReadHTML();
 
 // 開始content script運作 
 async function activeWhenReadHTML() {
-	console.log("內插腳本載入543");
-	idList = await getIdListFromChromeStorage(); // 由 chrome.storage.local 取得id list
-	//idList = result;
-	console.log(idList);
+	// 取得論壇提供的業面路徑
+	console.log("開始content script運作1221");
+	try {
+		var els_pt = await getPath();
 
-	dealRowsById_TopThread();
-	dealRowsById_CommonThread();
+		idList = await getIdListFromChromeStorage(); // 由 chrome.storage.local 取得id list
 
+		if (els_pt.length == 4 && els_pt[3].innerText == '按摩/指油壓/理容') {
+			console.log("內插腳本: 版面");
+
+			//idList = result;
+			console.log(idList);
+
+			dealRowsById_TopThread();
+			dealRowsById_CommonThread();
+
+		} else if (els_pt.length == 5 && els_pt[3].innerText == '按摩/指油壓/理容') {
+			console.log("內插腳本: 各別頁面");
+		} else {
+			// do nothing
+			console.log("非目標位置");
+		}
+	} catch (e) {
+		console.log(e);
+	}
 }
 
 // 由 chrome.storage.local 取得id list
@@ -25,7 +42,17 @@ function getIdListFromChromeStorage() {
 	});
 }
 
-
+// 取得論壇提供的業面路徑, 錯誤則回傳''
+function getPath() {
+	return new Promise(resolve => {
+		try {
+			resolve(document.getElementById("pt").getElementsByTagName('a'));
+		} catch(e) {
+			console.log(e);
+			resolve('');
+		}		
+	});
+}
 
 // 在接收訊息的那端,需要設定 runtime.onMessage 的事件監聽器來處理此訊息，
 // 不論是從 content script 或 extension page 的做法都一樣
