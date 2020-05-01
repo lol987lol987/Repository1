@@ -64,3 +64,8 @@ function pri(str) {
 		console.log(str);
 	}
 }
+
+var xTest= 'test';
+function getTest() {
+	return xTest;
+}

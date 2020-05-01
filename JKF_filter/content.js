@@ -3,27 +3,37 @@ console.log("內插腳本載入");
 chrome.storage.local.get(['idList'], setIdList);
 
 var idList = [];
-var rr;
-
-// 由popup -> popup綁定的js -> this  顯示目前idList
-const onMessage = (message) => {
-	console.log('顯示目前idList');
-
-	saveList(idList); // 儲存到storage.local
-
-	alert(idList);
 
 
-}
+var myNS = new(function() {
+	this.saySomething = function() {
+		alert('hello!');
+	};
 
-chrome.runtime.onMessage.addListener(onMessage);
+})();
+myNS.saySomething(); // hello!
 
+// 
+// 在接收訊息的那端,你需要設定 runtime.onMessage 的事件監聽器來處理此訊息，
+// 不論是從 content script 或 extension page 的做法都一樣
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+	console.log(
+		sender.tab ?
+		'from a content script:' + sender.tab.url :
+		'from the extension'
+	);
+	if (request.greeting == 'get_idList') {
+		sendResponse({
+			farewell: idList
+		});
+	}
+});
 
 function setIdList(result) { // 讀入idList	
 	//idList = rr.split("\r\n");
 	idList = result['idList'];
 	console.log(idList);
-
+	pri(getTest());
 	getRows();
 	getRows_commonThread();
 }
@@ -87,7 +97,7 @@ function getRows_commonThread() {
 		// 取出commonThread
 		var commonThread = commonThreads[i].parentElement;
 		// 取出作者id
-		var el_author = getAuthorFromTopthread_Common(commonThread);		
+		var el_author = getAuthorFromTopthread_Common(commonThread);
 
 
 		var newTd = document.createElement("td");
@@ -152,12 +162,12 @@ function onSelectChanged_Top(event) {
 
 // 下拉式選單事件 common
 function onSelectChanged_Common(event) {
-	console.log(event);	
+	console.log(event);
 	var commonThread = event['path'][2];
 	//console.log(topthread);
 
 	var el_author = getAuthorFromTopthread_Common(commonThread);
-	
+
 	var selectBox = commonThread.getElementsByClassName("selectBox1")[0];
 
 	if ("--" == selectBox.value) {
