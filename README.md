@@ -5,11 +5,11 @@
 目前方向<br>
 
 
-1. 整理code 以符合適合專案合作的模式 --> 進行中  <br> 
-* a. 增加註解與有意義的說明文件 <br>
-* b. 清理無意義的code跟註解  <br>
-* c. 特殊的function class化  <br>
-* d. 調整流程  <br>
+1. 整理code 以符合適合專案合作的模式 --> 進行中  
+   * a. 增加註解與有意義的說明文件 <br>
+   * b. 清理無意義的code跟註解  <br>
+   * c. 特殊的function class化  <br>
+   * d. 調整流程  <br>
 
 2. popup的顯示優化<br>
 * a. popup.html美化 --> 尚未開始 <br>
