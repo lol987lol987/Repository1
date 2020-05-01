@@ -37,7 +37,13 @@ dButtonEvent.addEventListener('click', function(ce) {
 			greeting: 'get_idList'
 		}, function(response) {
 			console.log(response.farewell);
-			document.getElementById("output").innerHTML = response.farewell;
+			var res = response.farewell;
+			// 還原成txt需要的格式 方便使用者直接複製貼上 
+			var op = '';
+			for (let i = 0; i < res.length; i = i + 1) {
+				op = op + res[i][0] + ',' + res[i][1] + ',' + '<br>' + res[i][2] + '<br>';
+			}
+			document.getElementById("output").innerHTML = op;
 		});
 	});
 
