@@ -21,8 +21,9 @@ var getSelectedTab = (tab) => {
 
 var dButtonEvent = document.getElementById("button1");
 
-// 產生名單事前
 dButtonEvent.addEventListener('click', function(ce) {
+	//dButtonEvent.innerText ='!??';
+	//op.innerHTML = '12345';
 	document.getElementById("output").innerHTML = '123456';
 
 
@@ -33,13 +34,13 @@ dButtonEvent.addEventListener('click', function(ce) {
 		currentWindow: true
 	}, function(tabs) {
 		chrome.tabs.sendMessage(tabs[0].id, {
-			greeting: 'hello'
+			greeting: 'get_idList'
 		}, function(response) {
 			console.log(response.farewell);
 			document.getElementById("output").innerHTML = response.farewell;
 		});
 	});
-	
+
 });
 
 

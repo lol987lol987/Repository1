@@ -1,26 +1,39 @@
-console.log("內插腳本載入");
-
-chrome.storage.local.get(['idList'], setIdList);
-
+// 使用者清單
 var idList = [];
 
 
-var myNS = new(function() {
-	this.saySomething = function() {
-		alert('hello!');
-	};
+activeWhenReadHTML();
 
-})();
-myNS.saySomething(); // hello!
+// 開始content script運作 
+async function activeWhenReadHTML() {
+	console.log("內插腳本載入543");
+	idList = await getIdListFromChromeStorage(); // 由 chrome.storage.local 取得id list
+	//idList = result;
+	console.log(idList);
 
-// 
-// 在接收訊息的那端,你需要設定 runtime.onMessage 的事件監聽器來處理此訊息，
+	dealRowsById_TopThread();
+	dealRowsById_CommonThread();
+
+}
+
+// 由 chrome.storage.local 取得id list
+function getIdListFromChromeStorage() {
+	return new Promise(resolve => {
+		chrome.storage.local.get(['idList'], function(result) { // 讀入idList	
+			resolve(result['idList']);
+		});
+	});
+}
+
+
+
+// 在接收訊息的那端,需要設定 runtime.onMessage 的事件監聽器來處理此訊息，
 // 不論是從 content script 或 extension page 的做法都一樣
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	console.log(
 		sender.tab ?
-		'from a content script:' + sender.tab.url :
-		'from the extension'
+		'req from a content script:' + sender.tab.url :
+		'req from the extension'
 	);
 	if (request.greeting == 'get_idList') {
 		sendResponse({
@@ -29,18 +42,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	}
 });
 
-function setIdList(result) { // 讀入idList	
-	//idList = rr.split("\r\n");
-	idList = result['idList'];
-	console.log(idList);
-	pri(getTest());
-	getRows();
-	getRows_commonThread();
-}
 
-
-
-function getRows() {
+// 置頂的row 取出發文者id處理,變色與添加SelectionBox
+function dealRowsById_TopThread() {
 	console.log("抓欄位");
 
 	//置頂資訊
@@ -51,7 +55,7 @@ function getRows() {
 		var topthread = topthreads.item(i);
 
 		// 取出作者id
-		var el_author = getAuthorFromTopthread(topthread);
+		var el_author = GetElementUtil.getAuthorFromTopthread(topthread);
 
 
 		var newTd = document.createElement("td");
@@ -86,7 +90,8 @@ function getRows() {
 
 }
 
-function getRows_commonThread() {
+// 非置頂的row 取出發文者id處理
+function dealRowsById_CommonThread() {
 	console.log("抓欄位common_timubiao");
 
 
@@ -97,7 +102,7 @@ function getRows_commonThread() {
 		// 取出commonThread
 		var commonThread = commonThreads[i].parentElement;
 		// 取出作者id
-		var el_author = getAuthorFromTopthread_Common(commonThread);
+		var el_author = GetElementUtil.getAuthorFromTopthread_Common(commonThread);
 
 
 		var newTd = document.createElement("td");
@@ -132,13 +137,12 @@ function getRows_commonThread() {
 }
 
 
-// 下拉式選單事件
+// 置頂的下拉式選單事件
 function onSelectChanged_Top(event) {
 	//console.log(event);	
 	var topthread = event['path'][2];
-	//console.log(topthread);
 
-	var el_author = getAuthorFromTopthread(topthread);
+	var el_author = GetElementUtil.getAuthorFromTopthread(topthread);
 	var selectBox = topthread.getElementsByClassName("selectBox1")[0];
 
 	if ("--" == selectBox.value) {
@@ -160,13 +164,13 @@ function onSelectChanged_Top(event) {
 	saveList(idList); // 儲存到storage.local
 }
 
-// 下拉式選單事件 common
+// 非置頂的下拉式選單事件 common
 function onSelectChanged_Common(event) {
 	console.log(event);
 	var commonThread = event['path'][2];
 	//console.log(topthread);
 
-	var el_author = getAuthorFromTopthread_Common(commonThread);
+	var el_author = GetElementUtil.getAuthorFromTopthread_Common(commonThread);
 
 	var selectBox = commonThread.getElementsByClassName("selectBox1")[0];
 
