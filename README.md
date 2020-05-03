@@ -2,7 +2,24 @@
 
 某論壇過濾器<br>
 
-目前方向<br>
+目前架構:<br>
+配置檔: <br>
+* manifest.json 必要配置檔,詳情參閱google extension文件 <br>
+
+background: 啟動時先跑 <br>
+* bg.js 讀取txt,存入存檔 <br>
+
+content_scripts: 即時操作網頁元件,在特定網域下才動作 <br>
+* content.js 目前主入口,dispatch <br>
+* content_pt4.js 主要頁面 <br>
+* content_pt5.js 各別頁面 <br>
+* myWebUtil.js 目前用到的工具 <br>
+
+browser_action: 按下icon事件 <br>
+* popup.html <br>
+* popup.js <br>
+
+目前方向:<br>
 
 
 1. 整理code 以符合適合專案合作的模式 --> 進行中  
