@@ -1,10 +1,5 @@
-function saveList(idList) {
-	chrome.storage.local.set({
-		'idList': idList
-	}, function() {
-		console.log('idList存入chrome.storage.local成功:');
-	});
-}
+// 注意! util檔在manifest必須擺在content的前面,優先被讀取
+
 
 
 function removeFromArray(array, value) {
@@ -28,9 +23,25 @@ function getTest() {
 }
 
 
+// 在接收訊息的那端,需要設定 runtime.onMessage 的事件監聽器來處理此訊息，
+// 不論是從 content script 或 extension page 的做法都一樣
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+	console.log(
+		sender.tab ?
+		'req from a content script:' + sender.tab.url :
+		'req from the extension'
+	);
+	if (request.greeting == 'get_idList') {
+		sendResponse({
+			farewell: idList
+		});
+	}
+});
 
-// 取得element工具,客製化程度高
-var GetElementUtil = new(function() {
+
+
+// 取得JKF element工具,客製化程度高
+var JKFElementUtil = new(function() {
 
 	// 取出標題
 	this.getTitle = function(topthread) {
@@ -76,5 +87,39 @@ var GetElementUtil = new(function() {
 		return el_lastResponser;
 	}
 
+	// 取得論壇提供的業面路徑, 錯誤則回傳''
+	this.getPath_pt = function() {
+		return new Promise(resolve => {
+			try {
+				resolve(document.getElementById("pt").getElementsByTagName('a'));
+			} catch (e) {
+				console.log(e);
+				resolve('');
+			}
+		});
+	}
+
+})();
+
+// chrome.storage 相關的工具,例如儲存清單跟取出
+const ChromeStorageUtil = new(function() {
+
+	// 由 chrome.storage.local 取得id list, Promise
+	this.getIdList = function() {
+		return new Promise(resolve => {
+			chrome.storage.local.get(['idList'], function(result) { // 讀入idList	
+				resolve(result['idList']);
+			});
+		});
+	};
+
+	// 由 chrome.storage.local 儲存id list
+	this.saveList = function(idList) {
+		chrome.storage.local.set({
+			'idList': idList
+		}, function() {
+			console.log('idList存入chrome.storage.local成功:');
+		});
+	};
 
 })();

@@ -6,19 +6,20 @@ activeWhenReadHTML();
 
 // 開始content script運作 
 async function activeWhenReadHTML() {
-	// 取得論壇提供的業面路徑
-	console.log("開始content script運作1221");
-	try {
-		var els_pt = await getPath();
+	
+	console.log("開始content script運作 9817999");
 
-		idList = await getIdListFromChromeStorage(); // 由 chrome.storage.local 取得id list
+	try {
+		// 取得論壇提供的業面路徑, 錯誤則回傳''
+		var els_pt = await JKFElementUtil.getPath_pt();
+
+		// 由 chrome.storage.local 取得id list
+		idList = await ChromeStorageUtil.getIdList(); 
+
+		console.log(idList);
 
 		if (els_pt.length == 4 && els_pt[3].innerText == '按摩/指油壓/理容') {
 			console.log("內插腳本: 版面");
-
-			//idList = result;
-			console.log(idList);
-
 			dealRowsById_TopThread();
 			dealRowsById_CommonThread();
 
@@ -33,46 +34,11 @@ async function activeWhenReadHTML() {
 	}
 }
 
-// 由 chrome.storage.local 取得id list
-function getIdListFromChromeStorage() {
-	return new Promise(resolve => {
-		chrome.storage.local.get(['idList'], function(result) { // 讀入idList	
-			resolve(result['idList']);
-		});
-	});
-}
-
-// 取得論壇提供的業面路徑, 錯誤則回傳''
-function getPath() {
-	return new Promise(resolve => {
-		try {
-			resolve(document.getElementById("pt").getElementsByTagName('a'));
-		} catch(e) {
-			console.log(e);
-			resolve('');
-		}		
-	});
-}
-
-// 在接收訊息的那端,需要設定 runtime.onMessage 的事件監聽器來處理此訊息，
-// 不論是從 content script 或 extension page 的做法都一樣
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-	console.log(
-		sender.tab ?
-		'req from a content script:' + sender.tab.url :
-		'req from the extension'
-	);
-	if (request.greeting == 'get_idList') {
-		sendResponse({
-			farewell: idList
-		});
-	}
-});
 
 
 // 置頂的row 取出發文者id處理,變色與添加SelectionBox
 function dealRowsById_TopThread() {
-	console.log("抓欄位");
+	console.log("抓欄位 置頂");
 
 	//置頂資訊
 	var topthreads = document.getElementsByClassName("topthreads");
@@ -82,7 +48,7 @@ function dealRowsById_TopThread() {
 		var topthread = topthreads.item(i);
 
 		// 取出作者id
-		var el_author = GetElementUtil.getAuthorFromTopthread(topthread);
+		var el_author = JKFElementUtil.getAuthorFromTopthread(topthread);
 
 
 		var newTd = document.createElement("td");
@@ -129,7 +95,7 @@ function dealRowsById_CommonThread() {
 		// 取出commonThread
 		var commonThread = commonThreads[i].parentElement;
 		// 取出作者id
-		var el_author = GetElementUtil.getAuthorFromTopthread_Common(commonThread);
+		var el_author = JKFElementUtil.getAuthorFromTopthread_Common(commonThread);
 
 
 		var newTd = document.createElement("td");
@@ -169,7 +135,7 @@ function onSelectChanged_Top(event) {
 	//console.log(event);	
 	var topthread = event['path'][2];
 
-	var el_author = GetElementUtil.getAuthorFromTopthread(topthread);
+	var el_author = JKFElementUtil.getAuthorFromTopthread(topthread);
 	var selectBox = topthread.getElementsByClassName("selectBox1")[0];
 
 	if ("--" == selectBox.value) {
@@ -188,7 +154,7 @@ function onSelectChanged_Top(event) {
 		}
 	}
 
-	saveList(idList); // 儲存到storage.local
+	ChromeStorageUtil.saveList(idList); // 儲存到storage.local
 }
 
 // 非置頂的下拉式選單事件 common
@@ -197,7 +163,7 @@ function onSelectChanged_Common(event) {
 	var commonThread = event['path'][2];
 	//console.log(topthread);
 
-	var el_author = GetElementUtil.getAuthorFromTopthread_Common(commonThread);
+	var el_author = JKFElementUtil.getAuthorFromTopthread_Common(commonThread);
 
 	var selectBox = commonThread.getElementsByClassName("selectBox1")[0];
 
@@ -217,5 +183,5 @@ function onSelectChanged_Common(event) {
 		}
 	}
 
-	saveList(idList); // 儲存到storage.local
+	ChromeStorageUtil.saveList(idList); // 儲存到storage.local
 }
