@@ -43,14 +43,14 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 // 取得JKF element工具,客製化程度高
 var JKFElementUtil = new(function() {
 
-	// 取出標題
+	// 取出標題 string
 	this.getTitle = function(topthread) {
 		var title = topthread.getElementsByClassName('s xst').item(0).innerText;
 
 		return title;
 	};
 
-	// 取出作者id TOP , 置頂
+	// 取出作者id element, 置頂
 	this.getAuthorFromTopthread = function(topthread) {
 		var els_a = topthread.getElementsByTagName('a');
 		var el_author = '';
@@ -62,7 +62,7 @@ var JKFElementUtil = new(function() {
 		return el_author;
 	}
 
-	// 取出作者id , 非置頂 Common
+	// 取出作者id element, 非置頂 Common
 	this.getAuthorFromTopthread_Common = function(commonThread) {
 		var els_a = commonThread.getElementsByTagName('a');
 		var el_author = '';
@@ -87,7 +87,7 @@ var JKFElementUtil = new(function() {
 		return el_lastResponser;
 	}
 
-	// 取得論壇提供的業面路徑, 錯誤則回傳''
+	// 取得論壇提供的業面路徑 els, 錯誤則回傳''
 	this.getPath_pt = function() {
 		return new Promise(resolve => {
 			try {
@@ -99,6 +99,13 @@ var JKFElementUtil = new(function() {
 		});
 	}
 
+	/*
+
+	// 在各別頁面中取得作者id element
+	this.getAuthorSinglePage = function() {
+		return = document.getElementsByClassName('name xi2')[0];
+	}
+	*/
 })();
 
 // chrome.storage 相關的工具,例如儲存清單跟取出
