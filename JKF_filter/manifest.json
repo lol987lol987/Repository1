@@ -14,13 +14,13 @@
 	},
 	"content_scripts": [{
 		"matches": ["*://www.jkforum.net/*"],
-		"js": ["myWebUtil.js","content.js"]
+		"js": ["myWebUtil.js", "content.js", "content_pt5.js","content_pt4.js"]
 	}],
 	"browser_action": {
 		"default_icon": "icon.png",
 		"default_popup": "popup.html"
 	},
-	
+
 	"permissions": ["activeTab", "storage", {
 		"fileSystem": ["write", "retainEntries", "directory"]
 	}]
